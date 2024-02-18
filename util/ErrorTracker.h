@@ -1,0 +1,8 @@
+//
+// Created by ByteDance on 18/2/24.
+//
+
+#ifndef ORDERBOOK2_ERRORTRACKER_H
+#define ORDERBOOK2_ERRORTRACKER_H
+
+#endif //ORDERBOOK2_ERRORTRACKER_H
