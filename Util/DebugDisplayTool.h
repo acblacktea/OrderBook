@@ -1,8 +1,1 @@
-//
-// Created by ByteDance on 18/2/24.
-//
-
-#ifndef ORDERBOOK2_DEBUGDISPLAYTOOL_H
-#define ORDERBOOK2_DEBUGDISPLAYTOOL_H
-
-#endif //ORDERBOOK2_DEBUGDISPLAYTOOL_H
+#pragma once
