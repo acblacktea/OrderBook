@@ -19,8 +19,8 @@ namespace OrderBook {
         TradeDirection side{buyOrSell};
         int quantity;
         std::map<price, PriceLevel> priceLevelMap;
-        std::unordered_map<orderID, std::list<Order>::iterator> orderMap{};
-        std::unordered_map<orderID, std::list<std::map<price, PriceLevel>>::iterator> orderMap{};
+        std::unordered_map<orderID, std::list<Order>::iterator> ID2OrderMap{};
+        std::unordered_map<orderID, std::list<std::map<price, PriceLevel>>> ID2PriceLevelMap{};
     };
 
     template<TradeDirection buyOrSell>
@@ -40,6 +40,7 @@ namespace OrderBook {
     EventStatus Book<buyOrSell>::updateOrder(orderID ID, int quantity, int price) const {
         return fail;
     }
+
     template<TradeDirection buyOrSell>
     EventStatus Book<buyOrSell>::submitOrder(orderID ID, int quantity, int price) const {
         return fail;

@@ -26,7 +26,7 @@ namespace OrderBook {
         }
 
         if (status == success) {
-
+            updateBestBidAndOffer();
         }
 
         return status;
@@ -41,7 +41,7 @@ namespace OrderBook {
         }
 
         if (status == success) {
-
+            updateBestBidAndOffer();
         }
 
         return status;
@@ -55,7 +55,7 @@ namespace OrderBook {
         }
 
         if (status == success) {
-
+            updateBestBidAndOffer();
         }
 
         return status;
