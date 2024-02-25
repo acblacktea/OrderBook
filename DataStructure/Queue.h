@@ -22,6 +22,13 @@ namespace OrderBook {
             data.reserve(size);
         }
 
+        void pushData(T data) const{
+
+        }
+
+        T popData() const {
+
+        }
     private:
         std::vector<T> data;
     };

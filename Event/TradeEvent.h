@@ -3,12 +3,21 @@
 namespace OrderBook {
     enum class EventType {
         Default = 0,
+        Submit,
         Cancellation,
         Deletion,
         VisibleLimitOrderExecution,
-        HiddenLimitOrderExecution,
+        HiddenLimitOrderExecution, // unsupported
         CrossTrade, // unsupported
         TradingHaltIndicator
+    };
+
+    enum EventStatus {
+        pending = 0,
+        success,
+        fail,
+        unsupported,
+        illegal,
     };
 
     class TradeEvent {
@@ -26,6 +35,7 @@ namespace OrderBook {
             this->shareSize = shareSize;
             this->price = price;
             this->direction = direction;
+            this->status = EventStatus::pending;
         }
 
         unsigned long long timestamp{};
@@ -34,5 +44,8 @@ namespace OrderBook {
         unsigned int shareSize{};
         unsigned int price{};
         TradeDirection direction;
+        EventStatus status;
     };
+
+
 }// namespace OrderBook

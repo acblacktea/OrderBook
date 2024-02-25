@@ -4,30 +4,10 @@
 #include <list>
 #include <iostream>
 #include <algorithm>
-class c {
-public:
-    c(int c, int d): a(c), b(d){};
-
-    int a, b;
-};
-
-class ob {
-public:
-   ob() {
-       std::cout << "ob" << std::endl;
-   }
-
-   ob(const ob& o) {
-       std::cout << "ob& " << std::endl;
-   }
-
-   ob(ob&&) {
-       std::cout << "ob&& " << std::endl;
-   }
-
-};
+#include <map>
 
 int main() {
-    auto pt = std::make_unique<ob>(ob());
-    return 0;
+    auto list = std::list<int>{1, 2, 3};
+    auto it = ++list.begin();
+    cout << *it << endl;
 }

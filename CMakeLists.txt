@@ -9,7 +9,7 @@ add_executable(OrderBook2 main.cpp
         OrderBook/OrderBook.h
         OrderBook/OrderBook.h
         OrderBook/Book.h
-        OrderListener/FIXListener.h
+        OrderListener/NasdaqListener.h
         OrderListener/GenerateDataListener.h
         OrderListener/LobsterDataListener.h
         Util/DebugDisplayTool.h
@@ -21,4 +21,8 @@ add_executable(OrderBook2 main.cpp
         Util/Log.h
         Util/PerformanceTool.h
         DataStructure/Queue.h
-        OrderBook/PriceLevel.cpp)
+        OrderBook/PriceLevel.cpp
+        OrderBook/OrderBook.cpp
+        OrderBook/OrderBookManager.h
+        OrderBook/OrderBookManager.cpp
+        OrderListener/LondonExchangeListener.h)

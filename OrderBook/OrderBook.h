@@ -6,20 +6,24 @@
 #include "Order.h"
 #include <map>
 #include <utility>
+#include <list>
+
 namespace OrderBook {
+    using orderID = int;
+
     class OrderBook {
     public:
-        using orderID = unsigned int;
-        using eQueue = QueueForMultiThread<TradeEvent>;
         OrderBook() = default;
-        OrderBook(eQueue queue): eventQueue(std::move(queue)) {};
-        void ListenEvent() {}
+        EventStatus submitOrder(orderID ID, int quantity, int price, int tradeDirection);
+        EventStatus updateOrder(orderID ID, int quantity, int price, int tradeDirection);
+        EventStatus deleteOrder(orderID ID, int tradeDirection);
+        EventStatus executeOrder(orderID ID, int quantity, int tradeDirection);
+
     private:
+        void updateBestBidAndOffer();
         Book<TradeDirection::Buy> buyBook;
         Book<TradeDirection::Sell> sellBook;
-        PriceLevel *bestBid{nullptr};
-        PriceLevel *bestOffer{nullptr};
-        std::map<orderID, Order *> orderMap{};
-        eQueue eventQueue;
+        BestPriceLevel bestBid;
+        BestPriceLevel bestOffer;
     };
 }// namespace OrderBook

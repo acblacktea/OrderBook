@@ -8,7 +8,7 @@ namespace OrderBook {
         GenerateDataListener() = default;
         explicit GenerateDataListener(std::string filePath): filePath(std::move(filePath)) {}
         void listen() {
-            // TODO
+            for ()
         }
     private:
         std::string filePath;
