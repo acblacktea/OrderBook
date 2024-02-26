@@ -18,6 +18,7 @@ namespace OrderBook {
         fail,
         unsupported,
         illegal,
+        submitRepeatedOrder
     };
 
     class TradeEvent {
