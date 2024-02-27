@@ -35,7 +35,7 @@ namespace OrderBook {
 
         // priceLevelInit
         if (priceLevelMap.find(price) == priceLevelMap.end()) {
-            priceLevelMap[price] = PriceLevel(0);
+            priceLevelMap[price] = PriceLevel(price);
             priceLevel = &priceLevelMap[price];
 
             // o(logN)
@@ -46,7 +46,7 @@ namespace OrderBook {
 
         auto [status, orderIterator] = priceLevel->submitOrder(ID, quantity, price);
         if (status != success) {
-            // TODO add rollback logic.
+            // TODO How to handle rollback?
             return status;
         }
 
