@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.26)
-project(OrderBook2)
+project(OrderBook)
 
 set(CMAKE_CXX_STANDARD 23)
 

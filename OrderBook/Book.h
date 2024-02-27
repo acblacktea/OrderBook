@@ -17,7 +17,7 @@ namespace OrderBook {
         BestPriceLevel GetBestPriceLevel();
     private:
         TradeDirection side{buyOrSell};
-        int totalQuantity;
+        int totalQuantity{};
         std::unordered_map<price, PriceLevel> priceLevelMap{};
         std::map<price, PriceLevel*> priceLevelOrderMap{};
         std::unordered_map<orderID, std::list<Order>::iterator> ID2OrderMap{};
@@ -26,7 +26,7 @@ namespace OrderBook {
 
     /// submit O(1)
     template<TradeDirection buyOrSell>
-    inline EventStatus Book<buyOrSell>::submitOrder(orderID ID, int quantity, int price) {
+    EventStatus Book<buyOrSell>::submitOrder(orderID ID, int quantity, int price) {
         if (ID2OrderMap.find(ID) != ID2OrderMap.end()) {
             return submitRepeatedOrder;
         }
@@ -59,7 +59,7 @@ namespace OrderBook {
 
     // GetBestPriceLevel O(1)
     template<TradeDirection buyOrSell>
-    inline BestPriceLevel Book<buyOrSell>::GetBestPriceLevel() {
+    BestPriceLevel Book<buyOrSell>::GetBestPriceLevel() {
         BestPriceLevel bestPriceLevel;
         if (!priceLevelOrderMap.empty()) {
             std::map<price, PriceLevel*>::iterator bestPrice;
@@ -77,7 +77,7 @@ namespace OrderBook {
 
     // executeOrder O(1)
     template<TradeDirection buyOrSell>
-    inline EventStatus Book<buyOrSell>::executeOrder(orderID ID, int quantity) {
+    EventStatus Book<buyOrSell>::executeOrder(orderID ID, int quantity) {
         if (ID2OrderMap.find(ID) == ID2OrderMap.end()) {
             return ExecuteNonExistedOrder;
         }
@@ -103,7 +103,7 @@ namespace OrderBook {
 
     // deleteOrder O(1)
     template<TradeDirection buyOrSell>
-    inline EventStatus Book<buyOrSell>::deleteOrder(orderID ID) {
+    EventStatus Book<buyOrSell>::deleteOrder(orderID ID) {
         if (ID2OrderMap.find(ID) == ID2OrderMap.end()) {
             return DeleteNonExistedOrder;
         }
@@ -130,7 +130,7 @@ namespace OrderBook {
 
     /// updateOrder O(1) reduce price or quantity;
     template<TradeDirection buyOrSell>
-    inline EventStatus Book<buyOrSell>::updateOrder(orderID ID, int quantity, int price) {
+    EventStatus Book<buyOrSell>::updateOrder(orderID ID, int quantity, int price) {
         if (ID2OrderMap.find(ID) == ID2OrderMap.end()) {
             return UpdateNonExistedOrder;
         }
@@ -142,7 +142,7 @@ namespace OrderBook {
         auto status = success;
 
         if (price == beforePrice) {
-            status = quantity? beforePriceLevel->updateOrder(beforeIterator, quantity, price) : beforePriceLevel->deleteOrder(beforeIterator);
+            status = quantity? OrderBook::PriceLevel::updateOrder(beforeIterator, quantity, price) : beforePriceLevel->deleteOrder(beforeIterator);
             if (status != success) {
                 return status;
             }
@@ -165,8 +165,7 @@ namespace OrderBook {
             ID2OrderMap.erase(ID);
             ID2PriceLevelMap.erase(ID);
 
-            auto [nowStatus, orderIterator] = submitOrder(ID, quantity, price);
-            if (nowStatus != success) {
+            if (auto nowStatus = submitOrder(ID, quantity, price); nowStatus != success) {
                 /// todo add logic roll back
                 return nowStatus;
             }

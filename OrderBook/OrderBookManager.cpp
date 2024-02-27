@@ -3,7 +3,12 @@ namespace OrderBook {
     void OrderBookManager::ListenEvent() {
         while (eventInputQueue != nullptr) {
             auto event = eventInputQueue->popData();
-            switch(event.eventType) {
+            if (event.status != pending) {
+                eventOutputQueue->pushData(event);
+                continue;
+            }
+
+            switch (event.eventType) {
                 case EventType::Submit:
                     event.status = submitOrder(event);
                     break;
@@ -16,16 +21,18 @@ namespace OrderBook {
                 case EventType::VisibleLimitOrderExecution:
                     event.status = executeVisibleOrder(event);
                     break;
-                case EventType::HiddenLimitOrderExecution: // unsupported
+                case EventType::HiddenLimitOrderExecution:// unsupported
                     event.status = unsupported;
                     break;
-                case EventType::CrossTrade: // unsupported
+                case EventType::CrossTrade:// unsupported
                     event.status = unsupported;
                     break;
                 case EventType::TradingHaltIndicator:
                     event.status = success;
                     break;
                 default:
+                    event.status = unsupported;
+                    ;
             }
 
             eventOutputQueue->pushData(event);
@@ -33,16 +40,16 @@ namespace OrderBook {
     }
 
     EventStatus OrderBookManager::submitOrder(const TradeEvent &event) {
-        return orderBook.submitOrder(event.orderID, event.shareSize, event.price);
+        return orderBook.submitOrder(event.orderID, event.shareSize, event.price, event.direction);
     }
     EventStatus OrderBookManager::updateOrder(const TradeEvent &event) {
-        return orderBook.updateOrder(event.orderID, event.shareSize, event.price);
+        return orderBook.updateOrder(event.orderID, event.shareSize, event.price, event.direction);
     }
     EventStatus OrderBookManager::deleteOrder(const TradeEvent &event) {
-        return orderBook.deleteOrder(event.orderID);
+        return orderBook.deleteOrder(event.orderID, event.direction);
     }
     EventStatus OrderBookManager::executeVisibleOrder(const TradeEvent &event) {
-        return orderBook.executeOrder(event.orderID, event.shareSize);
+        return orderBook.executeOrder(event.orderID, event.shareSize, event.direction);
     }
 
 }// namespace OrderBook

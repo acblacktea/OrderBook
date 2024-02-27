@@ -3,13 +3,13 @@
 #include "../Event/TradeEvent.h"
 #include "Order.h"
 #include <list>
-#include <vector>
 #include <unordered_map>
+#include <vector>
 
 namespace OrderBook {
     class BestPriceLevel {
     public:
-        BestPriceLevel()= default;
+        BestPriceLevel() = default;
         BestPriceLevel(int quantity, int price) : quantity(quantity), price(price) {}
         int quantity{}, price{};
     };
@@ -19,7 +19,7 @@ namespace OrderBook {
         PriceLevel() = default;
         explicit PriceLevel(int price) : price(price){};
         std::tuple<EventStatus, std::list<Order>::iterator> submitOrder(orderID ID, int quantity, int price);
-        EventStatus updateOrder(std::list<Order>::iterator order, int quantity, int price);
+        static EventStatus updateOrder(std::list<Order>::iterator order, int quantity, int price);
         EventStatus deleteOrder(std::list<Order>::iterator order);
         EventStatus executeOrder(std::list<Order>::iterator order);
         int getQuantity() const { return quantity; }
