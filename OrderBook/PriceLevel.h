@@ -4,11 +4,12 @@
 #include "Order.h"
 #include <list>
 #include <vector>
+#include <unordered_map>
 
 namespace OrderBook {
     class BestPriceLevel {
     public:
-        BestPriceLevel(){};
+        BestPriceLevel()= default;
         BestPriceLevel(int quantity, int price) : quantity(quantity), price(price) {}
         int quantity{}, price{};
     };

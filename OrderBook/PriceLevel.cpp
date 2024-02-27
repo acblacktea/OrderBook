@@ -2,18 +2,24 @@
 namespace OrderBook {
 
     std::tuple<EventStatus, std::list<Order>::iterator> PriceLevel::submitOrder(orderID ID, int quantity, int price) {
-        return {};
+        orderList.emplace_back(ID, quantity, price);
+        return {success, orderList.end()--};
     }
 
     EventStatus PriceLevel::updateOrder(std::list<Order>::iterator order, int quantity, int price) {
-        return fail;
+        order->quantity = quantity;
+        order->price = price;
+        return success;
     }
 
     EventStatus PriceLevel::deleteOrder(std::list<Order>::iterator order) {
-        return fail;
+        orderList.erase(order);
+        return success;
     }
 
     EventStatus PriceLevel::executeOrder(std::list<Order>::iterator order) {
-        return fail;
+        orderList.erase(order);
+        // TODO add log
+        return success;
     }
 }

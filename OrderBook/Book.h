@@ -62,7 +62,13 @@ namespace OrderBook {
     inline BestPriceLevel Book<buyOrSell>::GetBestPriceLevel() {
         BestPriceLevel bestPriceLevel;
         if (!priceLevelOrderMap.empty()) {
-            auto bestPrice = priceLevelOrderMap.begin();
+            std::map<price, PriceLevel*>::iterator bestPrice;
+            if (side == TradeDirection::Buy) {
+                bestPrice = priceLevelOrderMap.begin();
+            } else if (side == TradeDirection::Sell && !priceLevelOrderMap.empty()){
+                bestPrice = --priceLevelOrderMap.end();
+            }
+
             bestPriceLevel = BestPriceLevel(bestPrice->second->getQuantity(), bestPrice->second->getPrice());
         }
 
@@ -169,4 +175,5 @@ namespace OrderBook {
         totalQuantity -= beforeQuantity - quantity;
         return status;
     }
+
 }// namespace OrderBook
