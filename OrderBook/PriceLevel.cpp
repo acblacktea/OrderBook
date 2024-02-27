@@ -3,7 +3,7 @@ namespace OrderBook {
 
     std::tuple<EventStatus, std::list<Order>::iterator> PriceLevel::submitOrder(orderID ID, int quantity, int price) {
         orderList.emplace_back(ID, quantity, price);
-        return {success, orderList.end()--};
+        return {success, --orderList.end()};
     }
 
     EventStatus PriceLevel::updateOrder(std::list<Order>::iterator order, int quantity, int price) {

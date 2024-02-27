@@ -25,4 +25,5 @@ add_executable(OrderBook2 main.cpp
         OrderBook/OrderBook.cpp
         OrderBook/OrderBookManager.h
         OrderBook/OrderBookManager.cpp
-        OrderListener/LondonExchangeListener.h)
+        OrderListener/LondonExchangeListener.h
+        OrderListener/GenerateDataListener.cpp)
