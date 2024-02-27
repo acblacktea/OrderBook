@@ -57,7 +57,7 @@ namespace OrderBook {
         return status;
     }
 
-    // GetBestPriceLevel O(1)
+    /// GetBestPriceLevel O(1)
     template<TradeDirection buyOrSell>
     BestPriceLevel Book<buyOrSell>::GetBestPriceLevel() {
         BestPriceLevel bestPriceLevel;
@@ -101,7 +101,7 @@ namespace OrderBook {
         return status;
     }
 
-    // deleteOrder O(1)
+    /// deleteOrder O(1)
     template<TradeDirection buyOrSell>
     EventStatus Book<buyOrSell>::deleteOrder(orderID ID) {
         if (ID2OrderMap.find(ID) == ID2OrderMap.end()) {

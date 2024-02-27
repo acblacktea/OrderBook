@@ -3,7 +3,7 @@ project(OrderBook)
 
 set(CMAKE_CXX_STANDARD 23)
 
-add_executable(OrderBook2 main.cpp
+add_executable(OrderBook main.cpp
         Event/TradeEvent.h
         MemoryPool/MemoryPool.h
         OrderBook/OrderBook.h
@@ -26,4 +26,5 @@ add_executable(OrderBook2 main.cpp
         OrderBook/OrderBookManager.h
         OrderBook/OrderBookManager.cpp
         OrderListener/LondonExchangeListener.h
-        OrderListener/GenerateDataListener.cpp)
+        OrderListener/GenerateDataListener.cpp
+        test.cpp)
