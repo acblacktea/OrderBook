@@ -5,15 +5,15 @@ namespace OrderBook {
         return {};
     }
 
-    EventStatus PriceLevel::updateOrder(Order *order, int quantity, int price) {
+    EventStatus PriceLevel::updateOrder(std::list<Order>::iterator order, int quantity, int price) {
         return fail;
     }
 
-    EventStatus PriceLevel::deleteOrder(Order *order) {
+    EventStatus PriceLevel::deleteOrder(std::list<Order>::iterator order) {
         return fail;
     }
 
-    EventStatus PriceLevel::executeOrder(Order *order) {
+    EventStatus PriceLevel::executeOrder(std::list<Order>::iterator order) {
         return fail;
     }
 }
