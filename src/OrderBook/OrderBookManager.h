@@ -7,15 +7,15 @@ namespace OrderBook {
     public:
         using eQueue = LockFreeRingQueue<TradeEvent>;
         OrderBookManager() = default;
-        OrderBookManager(const eQueue *inputQueue, const eQueue *outputQueue)
+        OrderBookManager(eQueue *inputQueue, eQueue *outputQueue)
             :eventInputQueue{inputQueue}, eventOutputQueue{outputQueue} {};
         void ListenEvent();
 
     private:
 
         OrderBook orderBook; // currently only support one order book, in future will support multi order book
-        const eQueue *eventInputQueue{};
-        const eQueue *eventOutputQueue{};
+        eQueue *eventInputQueue{};
+        eQueue *eventOutputQueue{};
 
         EventStatus submitOrder(const TradeEvent &event);
         EventStatus updateOrder(const TradeEvent &event);

@@ -15,7 +15,7 @@ namespace OrderBook {
         void listen();
 
     private:
-        const eQueue *eventInputQueue{};
+        eQueue *eventInputQueue{};
         std::string filePath;
     };
 }// namespace OrderBook

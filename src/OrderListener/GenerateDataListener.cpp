@@ -22,7 +22,7 @@ namespace OrderBook {
                 tradeEvent.status = EventStatus::Illegal;
             }
 
-            eventInputQueue->ou(tradeEvent);
+            eventInputQueue->push(tradeEvent);
             // stop
             if (tradeEvent.eventType == EventType::TradingHaltIndicator) {
                 break;
