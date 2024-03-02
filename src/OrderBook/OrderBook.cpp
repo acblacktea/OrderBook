@@ -10,7 +10,7 @@ namespace OrderBook {
             status = sellBook.submitOrder(ID, quanatity, price);
         }
 
-        if (status == success) {
+        if (status == EventStatus::Success) {
             updateBestBidAndOffer();
         }
 
@@ -25,7 +25,7 @@ namespace OrderBook {
             status = sellBook.updateOrder(ID, quanatity, price);
         }
 
-        if (status == success) {
+        if (status == EventStatus::Success) {
             updateBestBidAndOffer();
         }
 
@@ -40,7 +40,7 @@ namespace OrderBook {
             status = sellBook.executeOrder(ID, quanatity);
         }
 
-        if (status == success) {
+        if (status == EventStatus::Success) {
             updateBestBidAndOffer();
         }
 
@@ -54,7 +54,7 @@ namespace OrderBook {
             status = sellBook.deleteOrder(ID);
         }
 
-        if (status == success) {
+        if (status == EventStatus::Success) {
             updateBestBidAndOffer();
         }
 

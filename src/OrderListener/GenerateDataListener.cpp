@@ -19,10 +19,10 @@ namespace OrderBook {
                 tradeEvent.price = std::stoi(matches[4].str());
                 tradeEvent.direction = static_cast<TradeDirection>(std::stoi(matches[5].str()));
             } else {
-                tradeEvent.status = illegal;
+                tradeEvent.status = EventStatus::Illegal;
             }
 
-            eventInputQueue->pushData(tradeEvent);
+            eventInputQueue->ou(tradeEvent);
             // stop
             if (tradeEvent.eventType == EventType::TradingHaltIndicator) {
                 break;

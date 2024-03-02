@@ -10,4 +10,7 @@ namespace OrderBook {
     };
 
     enum ErrorCoded {};
+
+    constexpr auto inputQueueSize = 10000000;
+    constexpr auto outputQueueSize = 10000000;
 }

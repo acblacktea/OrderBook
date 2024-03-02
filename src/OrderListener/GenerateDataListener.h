@@ -9,7 +9,7 @@
 namespace OrderBook {
     class GenerateDataListener {
     public:
-        using eQueue = QueueForMultiThread<TradeEvent>;
+        using eQueue = LockFreeRingQueue<TradeEvent>;
         GenerateDataListener() = default;
         explicit GenerateDataListener(std::string filePath, eQueue *queue): filePath(std::move(filePath)), eventInputQueue(queue) {}
         void listen();

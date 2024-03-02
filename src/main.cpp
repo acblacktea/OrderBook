@@ -1,11 +1,12 @@
-#include "./OrderBook/OrderBookManager.h"
-#include "./OrderListener/GenerateDataListener.h"
+#include "OrderBook/OrderBookManager.h"
+#include "OrderListener/GenerateDataListener.h"
+#include "DataStructure/Queue.h"
+#include "Event/TradeEvent.h"
 #include <string>
 #include <thread>
 using namespace OrderBook;
 int main(int argc, char *argv[]) {
     std::string filePath;
-
     for (auto i = 0; i < argc; ++i) {
         std::string parameter = std::string(argv[i]);
         if (parameter == "-f") {
@@ -16,8 +17,8 @@ int main(int argc, char *argv[]) {
         }
     }
 
-    QueueForMultiThread<TradeEvent> inputQueue;
-    QueueForMultiThread<TradeEvent> outputQueue;
+    LockFreeRingQueue<TradeEvent> inputQueue(inputQueueSize);
+    LockFreeRingQueue<TradeEvent> outputQueue(outputQueueSize);
     auto generateDataListener = GenerateDataListener(filePath, &inputQueue);
     auto orderBookManager = OrderBookManager(&inputQueue, &outputQueue);
 

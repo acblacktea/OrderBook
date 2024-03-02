@@ -12,13 +12,13 @@ namespace OrderBook {
         TradingHaltIndicator
     };
 
-    enum EventStatus {
-        pending = 0,
-        success,
-        fail,
-        unsupported,
-        illegal,
-        submitRepeatedOrder,
+    enum class EventStatus {
+        Pending = 0,
+        Success,
+        Fail,
+        Unsupported,
+        Illegal,
+        SubmitRepeatedOrder,
         ExecuteNonExistedOrder,
         DeleteNonExistedOrder,
         UpdateNonExistedOrder
@@ -39,7 +39,7 @@ namespace OrderBook {
             this->shareSize = shareSize;
             this->price = price;
             this->direction = direction;
-            this->status = EventStatus::pending;
+            this->status = EventStatus::Pending;
         }
 
         unsigned long long timestamp{};

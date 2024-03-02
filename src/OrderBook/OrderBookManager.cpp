@@ -2,9 +2,9 @@
 namespace OrderBook {
     void OrderBookManager::ListenEvent() {
         while (eventInputQueue != nullptr) {
-            auto event = eventInputQueue->popData();
-            if (event.status != pending) {
-                eventOutputQueue->pushData(event);
+            auto event = eventInputQueue->pop();
+            if (event.status != EventStatus::Pending) {
+                eventOutputQueue->push(event);
                 continue;
             }
 
@@ -22,20 +22,20 @@ namespace OrderBook {
                     event.status = executeVisibleOrder(event);
                     break;
                 case EventType::HiddenLimitOrderExecution:// unsupported
-                    event.status = unsupported;
+                    event.status = EventStatus::Unsupported;
                     break;
                 case EventType::CrossTrade:// unsupported
-                    event.status = unsupported;
+                    event.status = EventStatus::Unsupported;
                     break;
                 case EventType::TradingHaltIndicator:
-                    event.status = success;
+                    event.status = EventStatus::Success;
                     break;
                 default:
-                    event.status = unsupported;
+                    event.status = EventStatus::Unsupported;
                     ;
             }
 
-            eventOutputQueue->pushData(event);
+            eventOutputQueue->push(event);
         }
     }
 

@@ -5,7 +5,7 @@
 namespace OrderBook {
     class OrderBookManager {
     public:
-        using eQueue = QueueForMultiThread<TradeEvent>;
+        using eQueue = LockFreeRingQueue<TradeEvent>;
         OrderBookManager() = default;
         OrderBookManager(const eQueue *inputQueue, const eQueue *outputQueue)
             :eventInputQueue{inputQueue}, eventOutputQueue{outputQueue} {};

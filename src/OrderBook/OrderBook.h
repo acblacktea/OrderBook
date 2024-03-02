@@ -1,12 +1,12 @@
 #pragma once
+#include "../Util/Util.h"
 #include "../DataStructure/Queue.h"
 #include "../Event/TradeEvent.h"
-#include "../Util/Util.h"
 #include "Book.h"
 #include "Order.h"
+#include <list>
 #include <map>
 #include <utility>
-#include <list>
 
 namespace OrderBook {
     using orderID = int;
