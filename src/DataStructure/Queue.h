@@ -21,8 +21,12 @@ namespace OrderBook {
         explicit LockFreeRingQueue(int size) {
             assert(std::atomic_is_lock_free(&atomicStatus));
             data.reserve(size);
+            for (auto i = 0; i < size; ++i) {
+                data.emplace_back(T());
+            }
+
             capicity = size;
-            atomicStatus.store({0, -1}, std::memory_order_relaxed);
+            atomicStatus.store({0, -1, 0, 0}, std::memory_order_relaxed);
         }
 
         // must success
@@ -32,7 +36,7 @@ namespace OrderBook {
             do {
                 status = atomicStatus.load(std::memory_order_relaxed);
                 nextTail = (status.tail + 1) % capicity;
-            } while (status.len < capicity && atomicStatus.compare_exchange_weak(status, {status.head, nextTail, status.len + 1}));
+            } while (status.len >= capicity || !atomicStatus.compare_exchange_weak(status, {status.head, nextTail, status.len + 1, 0}));
 
             data[nextTail] = value;
         }
@@ -40,13 +44,20 @@ namespace OrderBook {
         // must success
         T pop() {
             int nextHead;
+            int head;
             Meta status;
             do {
                 status = atomicStatus.load(std::memory_order_relaxed);
                 nextHead = (status.head + 1) % capicity;
-            } while (status.len  >= 0 && atomicStatus.compare_exchange_weak(status, {nextHead, status.tail, status.len - 1}));
 
-            return data[nextHead];
+            } while (status.len <= 0 || !atomicStatus.compare_exchange_weak(status, {nextHead, status.tail, status.len - 1, 0}));
+
+            return data[status.head];
+        }
+
+        size_t size() {
+            auto status = atomicStatus.load(std::memory_order_relaxed);
+            return status.len;
         }
 
 

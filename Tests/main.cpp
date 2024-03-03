@@ -1,5 +1,4 @@
 #include <gtest/gtest.h>
-#include <OrderBook/OrderBookManager.h>
 
 int main(int argc, char **argv) {
     ::testing::InitGoogleTest(&argc, argv);
