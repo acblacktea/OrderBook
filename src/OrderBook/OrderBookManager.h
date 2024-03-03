@@ -3,17 +3,16 @@
 #include "OrderBook.h"
 #include "unordered_map"
 namespace OrderBook {
-    class OrderBookManager {
+    class orderBookManagerTest {
     public:
         using eQueue = LockFreeRingQueue<TradeEvent>;
-        OrderBookManager() = default;
-        OrderBookManager(eQueue *inputQueue, eQueue *outputQueue)
+        orderBookManagerTest() = default;
+        orderBookManagerTest(eQueue *inputQueue, eQueue *outputQueue)
             :eventInputQueue{inputQueue}, eventOutputQueue{outputQueue} {};
         void ListenEvent();
 
     private:
-
-        OrderBook orderBook; // currently only support one order book, in future will support multi order book
+        orderBookTest orderBook; // currently only support one order book, in future will support multi order book
         eQueue *eventInputQueue{};
         eQueue *eventOutputQueue{};
 

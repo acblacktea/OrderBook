@@ -8,7 +8,6 @@ namespace OrderBook {
         std::ifstream file("filePath");
         std::regex rgx = std::regex("(.+),(.+),(.+),(.+),(.+),(.+)");
         std::smatch matches;
-        std::cout << 123 << std::endl;
         while (std::getline(file, line)) {
             TradeEvent tradeEvent;
             if (std::regex_search(line, matches, rgx)) {

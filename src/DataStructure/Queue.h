@@ -4,8 +4,8 @@
 #include <vector>
 namespace OrderBook {
 
-    /// lock free queue just simple implementation, dont scold me....
-    /// i need to do more test to gurantee that this implementation doesnt have any problems
+    /// simple implementation of lock free queue, dont scold me....
+    /// i need to do more test to gurantee that this implementation doesnt have any concurrent problems
     template<typename T>
     class LockFreeRingQueue {
     public:
@@ -68,21 +68,23 @@ namespace OrderBook {
 
         // must success
         void push(T value) {
-            while (tail - head + 1 >= capicity) {}
+            while (len >= capicity) {}
             int nextTail = (tail + 1) % capicity;;
             data[nextTail] = value;
             tail = nextTail;
+            ++len;
         }
 
         T pop() {
-            while (tail - head + 1 == 0) {}
+            while (len == 0) {}
             auto currentHead = head;
-            head = (head + 1) % capicity;;
+            head = (head + 1) % capicity;
+            --len;
             return data[currentHead];
         }
 
     private:
-        int tail{-1}, head{0};
+        int tail{-1}, head{0}, len;
         int capicity{0};
         std::vector<T> data;
     };

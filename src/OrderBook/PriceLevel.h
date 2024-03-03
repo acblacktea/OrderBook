@@ -17,7 +17,10 @@ namespace OrderBook {
     class PriceLevel {
     public:
         PriceLevel() = default;
-        explicit PriceLevel(int price) : price(price){};
+        explicit PriceLevel(int price) : price(price){
+            assert(price > 0);
+        };
+
         std::tuple<EventStatus, std::list<Order>::iterator> submitOrder(orderID ID, int quantity, int price);
         static EventStatus updateOrder(std::list<Order>::iterator order, int quantity, int price);
         EventStatus deleteOrder(std::list<Order>::iterator order);

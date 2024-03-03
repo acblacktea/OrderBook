@@ -11,9 +11,9 @@
 namespace OrderBook {
     using orderID = int;
 
-    class OrderBook {
+    class orderBookTest {
     public:
-        OrderBook() = default;
+        orderBookTest() = default;
         EventStatus submitOrder(orderID ID, int quantity, int price, TradeDirection tradeDirection);
         EventStatus updateOrder(orderID ID, int quantity, int price, TradeDirection tradeDirection);
         EventStatus deleteOrder(orderID ID, TradeDirection tradeDirection);
