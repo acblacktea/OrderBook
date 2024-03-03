@@ -11,14 +11,15 @@ namespace OrderBook {
     public:
         using Meta = class QueueInfo {
         public:
-            int head, tail;
+            int head, tail, len, placeHolder /*guarantee lock free*/;
         };
 
         LockFreeRingQueue() {
-            assert(std::atomic_is_lock_free(&atomicStatus));
+            assert(std::atomic_is_lock_free(atomicStatus));
         };
+
         explicit LockFreeRingQueue(int size) {
-            assert(std::atomic_is_lock_free(&atomicStatus));
+            assert(std::atomic_is_lock_free(atomicStatus));
             data.reserve(size);
             capicity = size;
             atomicStatus.store({0, -1}, std::memory_order_relaxed);
@@ -31,7 +32,7 @@ namespace OrderBook {
             do {
                 status = atomicStatus.load(std::memory_order_relaxed);
                 nextTail = (status.tail + 1) % capicity;
-            } while (status.tail - status.head + 1 < capicity && atomicStatus.compare_exchange_weak(status, {status.head, nextTail}));
+            } while (status.len < capicity && atomicStatus.compare_exchange_weak(status, {status.head, nextTail, status.len + 1}));
 
             data[nextTail] = value;
         }
@@ -42,8 +43,8 @@ namespace OrderBook {
             Meta status;
             do {
                 status = atomicStatus.load(std::memory_order_relaxed);
-                nextHead = (status.head + 1) % capicity;
-            } while (status.tail - status.head + 1 >= 0 && atomicStatus.compare_exchange_weak(status, {nextHead, status.tail}));
+                nextHead = (status.nextHead + 1) % capicity;
+            } while (status.len  >= 0 && atomicStatus.compare_exchange_weak(status, {nextHead, status.tail, status.len - 1}));
 
             return data[nextHead];
         }
@@ -51,7 +52,7 @@ namespace OrderBook {
 
     private:
         std::vector<T> data;
-        std::atomic<Meta> atomicStatus{{0, -1}};
+        std::atomic<Meta> atomicStatus{{0, -1, 0, 0}};
         int capicity{0};
     };
 
