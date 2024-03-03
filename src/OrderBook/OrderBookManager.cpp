@@ -21,7 +21,7 @@ namespace OrderBook {
                 case EventType::VisibleLimitOrderExecution:
                     event.status = executeVisibleOrder(event);
                     break;
-                case EventType::HiddenLimitOrderExecution:// unsupported
+                case EventType::HiddenLimitOrderExecution: // unsupported
                     event.status = EventStatus::Unsupported;
                     break;
                 case EventType::CrossTrade:// unsupported
@@ -32,7 +32,6 @@ namespace OrderBook {
                     break;
                 default:
                     event.status = EventStatus::Unsupported;
-                    ;
             }
 
             eventOutputQueue->push(event);

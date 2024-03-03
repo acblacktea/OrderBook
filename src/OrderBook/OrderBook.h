@@ -14,10 +14,10 @@ namespace OrderBook {
     class orderBookTest {
     public:
         orderBookTest() = default;
-        EventStatus submitOrder(orderID ID, int quantity, int price, TradeDirection tradeDirection);
-        EventStatus updateOrder(orderID ID, int quantity, int price, TradeDirection tradeDirection);
+        EventStatus submitOrder(orderID ID, unsigned int quantity, unsigned int price, TradeDirection tradeDirection);
+        EventStatus updateOrder(orderID ID, unsigned int quantity, unsigned int price, TradeDirection tradeDirection);
         EventStatus deleteOrder(orderID ID, TradeDirection tradeDirection);
-        EventStatus executeOrder(orderID ID, int quantity, TradeDirection tradeDirection);
+        EventStatus executeOrder(orderID ID, unsigned int quantity, TradeDirection tradeDirection);
 
     private:
         void updateBestBidAndOffer();

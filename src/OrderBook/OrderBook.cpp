@@ -1,12 +1,12 @@
 #include "OrderBook.h"
 #include "../Event/TradeEvent.h"
 namespace OrderBook {
-    EventStatus orderBookTest::submitOrder(orderID ID, int quanatity, int price, TradeDirection tradeDirection) {
+    EventStatus orderBookTest::submitOrder(orderID ID, unsigned int quantity, unsigned int price, TradeDirection tradeDirection) {
         EventStatus status;
         if (tradeDirection == TradeDirection::Buy) {
-            status = buyBook.submitOrder(ID, quanatity, price);
+            status = buyBook.submitOrder(ID, quantity, price);
         } else {
-            status = sellBook.submitOrder(ID, quanatity, price);
+            status = sellBook.submitOrder(ID, quantity, price);
         }
 
         if (status == EventStatus::Success) {
@@ -16,12 +16,12 @@ namespace OrderBook {
         return status;
     }
 
-    EventStatus orderBookTest::updateOrder(orderID ID, int quanatity, int price, TradeDirection tradeDirection) {
+    EventStatus orderBookTest::updateOrder(orderID ID, unsigned int quantity, unsigned int price, TradeDirection tradeDirection) {
         EventStatus status;
         if (tradeDirection == TradeDirection::Buy) {
-            status = buyBook.updateOrder(ID, quanatity, price);
+            status = buyBook.updateOrder(ID, quantity, price);
         } else {
-            status = sellBook.updateOrder(ID, quanatity, price);
+            status = sellBook.updateOrder(ID, quantity, price);
         }
 
         if (status == EventStatus::Success) {
@@ -31,12 +31,12 @@ namespace OrderBook {
         return status;
     }
 
-    EventStatus orderBookTest::executeOrder(orderID ID, int quanatity, TradeDirection tradeDirection) {
+    EventStatus orderBookTest::executeOrder(orderID ID, unsigned int quantity, TradeDirection tradeDirection) {
         EventStatus status;
         if (tradeDirection == TradeDirection::Buy) {
-            status = buyBook.executeOrder(ID, quanatity);
+            status = buyBook.executeOrder(ID, quantity);
         } else {
-            status = sellBook.executeOrder(ID, quanatity);
+            status = sellBook.executeOrder(ID, quantity);
         }
 
         if (status == EventStatus::Success) {

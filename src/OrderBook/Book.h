@@ -10,10 +10,10 @@ namespace OrderBook {
     template<TradeDirection buyOrSell>
     class Book {
     public:
-        EventStatus submitOrder(orderID ID, int quantity, int price);
-        EventStatus updateOrder(orderID ID, int quantity, int price);
+        EventStatus submitOrder(orderID ID, unsigned int quantity, unsigned int price);
+        EventStatus updateOrder(orderID ID, unsigned int quantity, unsigned int price);
         EventStatus deleteOrder(orderID ID);
-        EventStatus executeOrder(orderID ID, int quantity);
+        EventStatus executeOrder(orderID ID, unsigned int quantity);
         BestPriceLevel GetBestPriceLevel();
     private:
         TradeDirection side{buyOrSell};
@@ -26,7 +26,7 @@ namespace OrderBook {
 
     /// submit O(1)
     template<TradeDirection buyOrSell>
-    EventStatus Book<buyOrSell>::submitOrder(orderID ID, int quantity, int price) {
+    EventStatus Book<buyOrSell>::submitOrder(orderID ID, unsigned int quantity, unsigned int price) {
         if (ID2OrderMap.find(ID) != ID2OrderMap.end()) {
             return EventStatus::SubmitRepeatedOrder;
         }
@@ -77,7 +77,7 @@ namespace OrderBook {
 
     // executeOrder O(1)
     template<TradeDirection buyOrSell>
-    EventStatus Book<buyOrSell>::executeOrder(orderID ID, int quantity) {
+    EventStatus Book<buyOrSell>::executeOrder(orderID ID, unsigned int quantity) {
         if (ID2OrderMap.find(ID) == ID2OrderMap.end()) {
             return EventStatus::ExecuteNonExistedOrder;
         }
@@ -111,7 +111,7 @@ namespace OrderBook {
         auto &iterator = ID2OrderMap[ID];
         auto priceLevel = priceLevelOrderMap[ID];
         auto quantity = priceLevel->getQuantity();
-        auto status = priceLevel->deleteOrder(iterator);
+        auto status = priceLevel->cancelOrder(iterator);
         if (status != EventStatus::Success) {
             return status;
         }
@@ -130,7 +130,7 @@ namespace OrderBook {
 
     /// updateOrder O(1) reduce price or quantity;
     template<TradeDirection buyOrSell>
-    EventStatus Book<buyOrSell>::updateOrder(orderID ID, int quantity, int price) {
+    EventStatus Book<buyOrSell>::updateOrder(orderID ID, unsigned int quantity, unsigned int price) {
         if (ID2OrderMap.find(ID) == ID2OrderMap.end()) {
             return EventStatus::UpdateNonExistedOrder;
         }
@@ -142,7 +142,7 @@ namespace OrderBook {
         auto status = EventStatus::Success;
 
         if (price == beforePrice) {
-            status = quantity? OrderBook::PriceLevel::updateOrder(beforeIterator, quantity, price) : beforePriceLevel->deleteOrder(beforeIterator);
+            status = quantity? beforePriceLevel->updateOrder(beforeIterator, quantity, price) : beforePriceLevel->cancelOrder(beforeIterator);
             if (status != EventStatus::Success) {
                 return status;
             }
@@ -152,7 +152,7 @@ namespace OrderBook {
                 priceLevelOrderMap.erase(price);
             }
         } else {
-            status = beforePriceLevel->deleteOrder(beforeIterator);
+            status = beforePriceLevel->cancelOrder(beforeIterator);
             if (status != EventStatus::Success) {
                 return status;
             }

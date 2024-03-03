@@ -17,20 +17,20 @@ namespace OrderBook {
     class PriceLevel {
     public:
         PriceLevel() = default;
-        explicit PriceLevel(int price) : price(price){
+        explicit PriceLevel(unsigned int price) : price(price) {
             assert(price > 0);
         };
 
-        std::tuple<EventStatus, std::list<Order>::iterator> submitOrder(orderID ID, int quantity, int price);
-        static EventStatus updateOrder(std::list<Order>::iterator order, int quantity, int price);
-        EventStatus deleteOrder(std::list<Order>::iterator order);
+        std::tuple<EventStatus, std::list<Order>::iterator> submitOrder(orderID ID, unsigned int newQuantity, unsigned int newPrice);
+        EventStatus updateOrder(std::list<Order>::iterator order, unsigned int newQuantity, unsigned int newPrice);
+        EventStatus cancelOrder(std::list<Order>::iterator order);
         EventStatus executeOrder(std::list<Order>::iterator order);
-        int getQuantity() const { return quantity; }
-        int getPrice() const { return price; }
-        size_t getOrderLength() const { return orderList.size(); }
+        unsigned getQuantity() const { return quantity; }
+        unsigned getPrice() const { return price; }
+        unsigned getOrderLength() const { return orderList.size(); }
 
     private:
         std::list<Order> orderList;
-        int quantity{}, price{};
+        unsigned int quantity{}, price{};
     };
 }// namespace OrderBook
