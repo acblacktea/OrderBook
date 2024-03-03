@@ -15,11 +15,11 @@ namespace OrderBook {
         };
 
         LockFreeRingQueue() {
-            assert(std::atomic_is_lock_free(atomicStatus));
+            assert(std::atomic_is_lock_free(&atomicStatus));
         };
 
         explicit LockFreeRingQueue(int size) {
-            assert(std::atomic_is_lock_free(atomicStatus));
+            assert(std::atomic_is_lock_free(&atomicStatus));
             data.reserve(size);
             capicity = size;
             atomicStatus.store({0, -1}, std::memory_order_relaxed);
@@ -43,7 +43,7 @@ namespace OrderBook {
             Meta status;
             do {
                 status = atomicStatus.load(std::memory_order_relaxed);
-                nextHead = (status.nextHead + 1) % capicity;
+                nextHead = (status.head + 1) % capicity;
             } while (status.len  >= 0 && atomicStatus.compare_exchange_weak(status, {nextHead, status.tail, status.len - 1}));
 
             return data[nextHead];
