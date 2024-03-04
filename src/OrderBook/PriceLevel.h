@@ -31,6 +31,6 @@ namespace OrderBook {
 
     private:
         std::list<Order> orderList;
-        unsigned int quantity{}, price{};
+        unsigned int quantity{0}, price{0};
     };
 }// namespace OrderBook

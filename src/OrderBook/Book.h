@@ -15,13 +15,18 @@ namespace OrderBook {
         EventStatus deleteOrder(orderID ID);
         EventStatus executeOrder(orderID ID, unsigned int quantity);
         BestPriceLevel GetBestPriceLevel();
+        const PriceLevel *GetPriceLevelByPrice(unsigned int price) const;
+        const Order *GetOrderByOrderID(orderID ID) const;
+        const PriceLevel *GetPriceLevelByOrderID(orderID ID) const;
+        unsigned int GetTotalQuantity() { return totalQuantity; }
+
     private:
         TradeDirection side{buyOrSell};
-        int totalQuantity{};
+        int totalQuantity{0};
         std::unordered_map<price, PriceLevel> priceLevelMap{};
-        std::map<price, PriceLevel*> priceLevelOrderMap{};
+        std::map<price, PriceLevel *> priceLevelOrderMap{};
         std::unordered_map<orderID, std::list<Order>::iterator> ID2OrderMap{};
-        std::unordered_map<orderID, PriceLevel*> ID2PriceLevelMap{};
+        std::unordered_map<orderID, PriceLevel *> ID2PriceLevelMap{};
     };
 
     /// submit O(1)
@@ -62,10 +67,10 @@ namespace OrderBook {
     BestPriceLevel Book<buyOrSell>::GetBestPriceLevel() {
         BestPriceLevel bestPriceLevel;
         if (!priceLevelOrderMap.empty()) {
-            std::map<price, PriceLevel*>::iterator bestPrice;
+            std::map<price, PriceLevel *>::iterator bestPrice;
             if (side == TradeDirection::Buy) {
                 bestPrice = priceLevelOrderMap.begin();
-            } else if (side == TradeDirection::Sell && !priceLevelOrderMap.empty()){
+            } else if (side == TradeDirection::Sell && !priceLevelOrderMap.empty()) {
                 bestPrice = --priceLevelOrderMap.end();
             }
 
@@ -142,7 +147,7 @@ namespace OrderBook {
         auto status = EventStatus::Success;
 
         if (price == beforePrice) {
-            status = quantity? beforePriceLevel->updateOrder(beforeIterator, quantity, price) : beforePriceLevel->cancelOrder(beforeIterator);
+            status = quantity ? beforePriceLevel->updateOrder(beforeIterator, quantity, price) : beforePriceLevel->cancelOrder(beforeIterator);
             if (status != EventStatus::Success) {
                 return status;
             }
@@ -173,6 +178,38 @@ namespace OrderBook {
 
         totalQuantity -= beforeQuantity - quantity;
         return status;
+    }
+
+    // currently only used by test, not concurrent safe
+    template<TradeDirection buyOrSell>
+    const Order *Book<buyOrSell>::GetOrderByOrderID(orderID ID) const {
+        auto iter = ID2OrderMap.find(ID);
+        if (iter != ID2OrderMap.end()) {
+            return &(*(iter->second));
+        }
+
+        return nullptr;
+    }
+
+    // currently only used by test, not concurrent safe
+    template<TradeDirection buyOrSell>
+    const PriceLevel *Book<buyOrSell>::GetPriceLevelByPrice(unsigned int price) const {
+        auto iter = priceLevelMap.find(price);
+        if (iter != priceLevelMap.end()) {
+            return &(iter->second);
+        }
+
+        return nullptr;
+    }
+
+    template<TradeDirection buyOrSell>
+    const PriceLevel *Book<buyOrSell>::GetPriceLevelByOrderID(orderID ID) const {
+        auto iter = ID2PriceLevelMap.find(ID);
+        if (iter != ID2PriceLevelMap.end()) {
+            return &(*(iter->second));
+        }
+
+        return nullptr;
     }
 
 }// namespace OrderBook

@@ -1,19 +1,19 @@
 #pragma once
+
 #include "../Util/Util.h"
 #include "../DataStructure/Queue.h"
 #include "../Event/TradeEvent.h"
 #include "Book.h"
 #include "Order.h"
+#include "PriceLevel.h"
 #include <list>
 #include <map>
 #include <utility>
 
 namespace OrderBook {
-    using orderID = int;
-
-    class orderBookTest {
+    class orderBook {
     public:
-        orderBookTest() = default;
+        orderBook() = default;
         EventStatus submitOrder(orderID ID, unsigned int quantity, unsigned int price, TradeDirection tradeDirection);
         EventStatus updateOrder(orderID ID, unsigned int quantity, unsigned int price, TradeDirection tradeDirection);
         EventStatus deleteOrder(orderID ID, TradeDirection tradeDirection);

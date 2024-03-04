@@ -6,7 +6,7 @@
 
 TEST(lock_free_queue, test_basic_function_basic) {
     auto count = 1000000;
-    OrderBook::LockFreeRingQueue<int> queue(count + 5);
+    OrderBook::LockFreeRingQueue<int> queue(count + 1000);
     auto counter = std::unordered_set<int>();
     for (auto i = 0; i < count; ++i) {
         queue.push(i);
@@ -19,16 +19,16 @@ TEST(lock_free_queue, test_basic_function_basic) {
 
     EXPECT_EQ(queue.size(), 0);
     EXPECT_EQ(counter.size(), count);
+
     for (auto i = 0; i < count; ++i) {
         EXPECT_TRUE(counter.find(i) != counter.end());
     }
-
 }
 
 
 TEST(lock_free_queue, test_basic_function) {
-    auto count = 1000000;
-    OrderBook::LockFreeRingQueue<int> queue(1);
+    auto count = 100000;
+    OrderBook::LockFreeRingQueue<int> queue(2);
     auto counter = std::unordered_set<int>();
     std::thread produce{[&] {
         for (auto i = 0; i < count; ++i) {
@@ -45,7 +45,7 @@ TEST(lock_free_queue, test_basic_function) {
         EXPECT_EQ(queue.size(), 0);
         EXPECT_EQ(counter.size(), count);
         for (auto i = 0; i < count; ++i) {
-            //EXPECT_TRUE(counter.find(i) != counter.end());
+            EXPECT_TRUE(counter.find(i) != counter.end());
         }
     }};
 

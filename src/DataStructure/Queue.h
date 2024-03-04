@@ -29,30 +29,38 @@ namespace OrderBook {
             atomicStatus.store({0, -1, 0, 0}, std::memory_order_relaxed);
         }
 
-        // must success
         void push(T value) {
-            int nextTail;
-            Meta status;
-            do {
-                status = atomicStatus.load(std::memory_order_relaxed);
-                nextTail = (status.tail + 1) % capicity;
-            } while (status.len >= capicity || !atomicStatus.compare_exchange_weak(status, {status.head, nextTail, status.len + 1, 0}));
-
-            data[nextTail] = value;
+            while(!tryPush(value));
         }
 
-        // must success
         T pop() {
-            int nextHead;
-            int head;
-            Meta status;
-            do {
-                status = atomicStatus.load(std::memory_order_relaxed);
-                nextHead = (status.head + 1) % capicity;
+            T value;
+            while(!tryPop(value)) {}
+            return value;
+        }
 
-            } while (status.len <= 0 || !atomicStatus.compare_exchange_weak(status, {nextHead, status.tail, status.len - 1, 0}));
 
-            return data[status.head];
+        inline bool tryPush(T& value) {
+            Meta status = atomicStatus.load(std::memory_order_relaxed);;
+            int nextTail = (status.tail + 1) % capicity;;
+            if (status.len < capicity && atomicStatus.compare_exchange_weak(status, {status.head, nextTail, status.len + 1, 0})) {
+                data[nextTail] = value;
+                return true;
+            }
+
+            return false;
+        }
+
+
+        inline bool tryPop(T &value) {
+            Meta status = atomicStatus.load(std::memory_order_relaxed);
+            int nextHead = (status.head + 1) % capicity;
+            if (status.len > 0 && atomicStatus.compare_exchange_weak(status, {nextHead, status.tail, status.len - 1, 0})) {
+                value = T(data[status.head]);
+                return true;
+            }
+
+            return false;
         }
 
         size_t size() {

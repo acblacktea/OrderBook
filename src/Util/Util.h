@@ -1,7 +1,7 @@
 #pragma once
 
 namespace OrderBook {
-    using orderID = int;
+    using orderID = unsigned int;
     using price = unsigned int;
 
     enum class TradeDirection {

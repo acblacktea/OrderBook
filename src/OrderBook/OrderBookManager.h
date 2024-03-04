@@ -12,7 +12,7 @@ namespace OrderBook {
         void ListenEvent();
 
     private:
-        orderBookTest orderBook; // currently only support one order book, in future will support multi order book
+        orderBook orderBook; // currently only support one order book, in future will support multi order book
         eQueue *eventInputQueue{};
         eQueue *eventOutputQueue{};
 
