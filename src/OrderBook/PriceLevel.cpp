@@ -32,9 +32,17 @@ namespace OrderBook {
         return EventStatus::Success;
     }
 
-    EventStatus PriceLevel::executeOrder(std::list<Order>::iterator order) {
-        quantity -= order->quantity;
-        orderList.erase(order);
+    EventStatus PriceLevel::executeOrder(std::list<Order>::iterator order, unsigned int executeQuantity) {
+        if (order->quantity < executeQuantity) {
+            return EventStatus::Illegal;
+        }
+
+        quantity -= executeQuantity;
+        order->quantity -= executeQuantity;
+        if (!order->quantity) {
+            orderList.erase(order);
+        }
+
         // TODO add log
         return EventStatus::Success;
     }

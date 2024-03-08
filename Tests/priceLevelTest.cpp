@@ -81,22 +81,32 @@ TEST(priceLevel, test_execute_order) {
    auto [eventStatus4, iter4] = priveLevel.submitOrder(3, 233333, 5);
 
 
-   priveLevel.executeOrder(iter2);
+   priveLevel.executeOrder(iter2, 2333);
    EXPECT_EQ(priveLevel.getQuantity(), 256899);
    EXPECT_EQ(priveLevel.getPrice(), 5);
    EXPECT_EQ(priveLevel.getOrderLength(), 3);
 
-   priveLevel.executeOrder(iter3);
+   priveLevel.executeOrder(iter3, 23333);
    EXPECT_EQ(priveLevel.getQuantity(), 233566);
    EXPECT_EQ(priveLevel.getPrice(), 5);
    EXPECT_EQ(priveLevel.getOrderLength(), 2);
 
-   priveLevel.executeOrder(iter1);
+   priveLevel.executeOrder(iter1, 233);
    EXPECT_EQ(priveLevel.getQuantity(), 233333);
    EXPECT_EQ(priveLevel.getPrice(), 5);
    EXPECT_EQ(priveLevel.getOrderLength(), 1);
 
-   priveLevel.executeOrder(iter4);
+   priveLevel.executeOrder(iter4, 1);
+   EXPECT_EQ(priveLevel.getQuantity(), 233332);
+   EXPECT_EQ(priveLevel.getPrice(), 5);
+   EXPECT_EQ(priveLevel.getOrderLength(), 1);
+
+   priveLevel.executeOrder(iter4, 2);
+   EXPECT_EQ(priveLevel.getQuantity(), 233330);
+   EXPECT_EQ(priveLevel.getPrice(), 5);
+   EXPECT_EQ(priveLevel.getOrderLength(), 1);
+
+   priveLevel.executeOrder(iter4, 233330);
    EXPECT_EQ(priveLevel.getQuantity(), 0);
    EXPECT_EQ(priveLevel.getPrice(), 5);
    EXPECT_EQ(priveLevel.getOrderLength(), 0);

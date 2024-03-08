@@ -1,7 +1,6 @@
 #pragma once
 
 #include "../Util/Util.h"
-#include "OrderBook.h"
 #include "PriceLevel.h"
 #include <map>
 #include <unordered_map>
@@ -15,6 +14,8 @@ namespace OrderBook {
         EventStatus deleteOrder(orderID ID);
         EventStatus executeOrder(orderID ID, unsigned int quantity);
         BestPriceLevel GetBestPriceLevel();
+
+        // only used for testing now, real production will use event driven way transmit information.
         const PriceLevel *GetPriceLevelByPrice(unsigned int price) const;
         const Order *GetOrderByOrderID(orderID ID) const;
         const PriceLevel *GetPriceLevelByOrderID(orderID ID) const;
@@ -28,6 +29,23 @@ namespace OrderBook {
         std::unordered_map<orderID, std::list<Order>::iterator> ID2OrderMap{};
         std::unordered_map<orderID, PriceLevel *> ID2PriceLevelMap{};
     };
+
+    /// GetBestPriceLevel O(1)
+    template<TradeDirection buyOrSell>
+    BestPriceLevel Book<buyOrSell>::GetBestPriceLevel() {
+        if (!priceLevelOrderMap.empty()) {
+            std::map<price, PriceLevel *>::iterator bestPrice;
+            if (side == TradeDirection::Buy) {
+                bestPrice = priceLevelOrderMap.begin();
+            } else if (side == TradeDirection::Sell) {
+                bestPrice = --priceLevelOrderMap.end();
+            }
+
+            return BestPriceLevel(bestPrice->second->getQuantity(), bestPrice->second->getPrice());
+        }
+
+        return BestPriceLevel{-1,-1};
+    }
 
     /// submit O(1)
     template<TradeDirection buyOrSell>
@@ -62,24 +80,6 @@ namespace OrderBook {
         return status;
     }
 
-    /// GetBestPriceLevel O(1)
-    template<TradeDirection buyOrSell>
-    BestPriceLevel Book<buyOrSell>::GetBestPriceLevel() {
-        BestPriceLevel bestPriceLevel;
-        if (!priceLevelOrderMap.empty()) {
-            std::map<price, PriceLevel *>::iterator bestPrice;
-            if (side == TradeDirection::Buy) {
-                bestPrice = priceLevelOrderMap.begin();
-            } else if (side == TradeDirection::Sell && !priceLevelOrderMap.empty()) {
-                bestPrice = --priceLevelOrderMap.end();
-            }
-
-            bestPriceLevel = BestPriceLevel(bestPrice->second->getQuantity(), bestPrice->second->getPrice());
-        }
-
-        return bestPriceLevel;
-    }
-
     // executeOrder O(1)
     template<TradeDirection buyOrSell>
     EventStatus Book<buyOrSell>::executeOrder(orderID ID, unsigned int quantity) {
@@ -88,20 +88,23 @@ namespace OrderBook {
         }
 
         auto &iterator = ID2OrderMap[ID];
-        auto priceLevel = priceLevelOrderMap[ID];
-        auto status = priceLevel->executeOrder(iterator);
+        auto priceLevel = ID2PriceLevelMap[ID];
+        auto price = priceLevel->getPrice();
+        auto status = priceLevel->executeOrder(iterator, quantity);
         if (status != EventStatus::Success) {
             return status;
         }
 
+        if (!iterator->quantity) {
+            ID2OrderMap.erase(ID);
+            ID2PriceLevelMap.erase(ID);
+        }
+
         if (!priceLevel->getOrderLength()) {
-            auto price = priceLevel->getPrice();
             priceLevelMap.erase(price);
             priceLevelOrderMap.erase(price);
         }
 
-        ID2OrderMap.erase(ID);
-        ID2PriceLevelMap.erase(ID);
         totalQuantity -= quantity;
         return status;
     }
@@ -114,7 +117,7 @@ namespace OrderBook {
         }
 
         auto &iterator = ID2OrderMap[ID];
-        auto priceLevel = priceLevelOrderMap[ID];
+        auto priceLevel = ID2PriceLevelMap[ID];
         auto quantity = priceLevel->getQuantity();
         auto status = priceLevel->cancelOrder(iterator);
         if (status != EventStatus::Success) {
@@ -141,7 +144,7 @@ namespace OrderBook {
         }
 
         auto &beforeIterator = ID2OrderMap[ID];
-        auto beforePriceLevel = priceLevelOrderMap[ID];
+        auto beforePriceLevel = ID2PriceLevelMap[ID];
         auto beforeQuantity = beforePriceLevel->getQuantity();
         auto beforePrice = beforePriceLevel->getPrice();
         auto status = EventStatus::Success;

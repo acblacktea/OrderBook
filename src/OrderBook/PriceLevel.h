@@ -24,7 +24,7 @@ namespace OrderBook {
         std::tuple<EventStatus, std::list<Order>::iterator> submitOrder(orderID ID, unsigned int newQuantity, unsigned int newPrice);
         EventStatus updateOrder(std::list<Order>::iterator order, unsigned int newQuantity, unsigned int newPrice);
         EventStatus cancelOrder(std::list<Order>::iterator order);
-        EventStatus executeOrder(std::list<Order>::iterator order);
+        EventStatus executeOrder(std::list<Order>::iterator order, unsigned int executeQuantity);
         unsigned getQuantity() const { return quantity; }
         unsigned getPrice() const { return price; }
         unsigned getOrderLength() const { return orderList.size(); }

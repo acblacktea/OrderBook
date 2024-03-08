@@ -11,9 +11,9 @@
 #include <utility>
 
 namespace OrderBook {
-    class orderBook {
+    class OrderBook {
     public:
-        orderBook() = default;
+        OrderBook() = default;
         EventStatus submitOrder(orderID ID, unsigned int quantity, unsigned int price, TradeDirection tradeDirection);
         EventStatus updateOrder(orderID ID, unsigned int quantity, unsigned int price, TradeDirection tradeDirection);
         EventStatus deleteOrder(orderID ID, TradeDirection tradeDirection);
