@@ -152,3 +152,71 @@ TEST(BookHelperTest, test_execute_order) {
     sellBook.executeOrder(6, 8);
     BookHelperTest::test_singleOrder(sellBook, 6, 0, 1, 0, -1, -1, 0, 0);
 }
+
+
+TEST(BookHelperTest, test_delete_order) {
+    OrderBook::Book<OrderBook::TradeDirection::Sell> sellBook;
+    sellBook.submitOrder(1, 12, 2);
+    sellBook.submitOrder(2, 13, 2);
+    sellBook.submitOrder(3, 14, 2);
+    sellBook.submitOrder(4, 12, 1);
+    sellBook.submitOrder(5, 13, 1);
+    sellBook.submitOrder(6, 14, 1);
+    sellBook.submitOrder(7, 12, 3);
+    sellBook.submitOrder(8, 13, 3);
+    sellBook.submitOrder(9, 14, 3);
+
+    sellBook.deleteOrder(1);
+    BookHelperTest::test_singleOrder(sellBook, 1, 0, 2, 105, 3, 39, 2, 27);
+    sellBook.deleteOrder(2);
+    BookHelperTest::test_singleOrder(sellBook, 2, 0, 2, 92, 3, 39, 1, 14);
+    sellBook.deleteOrder(3);
+    BookHelperTest::test_singleOrder(sellBook, 3, 0, 2, 78, 3, 39, 0, 0);
+
+    sellBook.deleteOrder(7);
+    BookHelperTest::test_singleOrder(sellBook, 7, 0, 3, 66, 3, 27, 2, 27);
+    sellBook.deleteOrder(8);
+    BookHelperTest::test_singleOrder(sellBook, 8, 0, 3, 53, 3, 14, 1, 14);
+    sellBook.deleteOrder(9);
+    BookHelperTest::test_singleOrder(sellBook, 9, 0, 3, 39, 1, 39, 0, 0);
+
+    sellBook.deleteOrder(4);
+    BookHelperTest::test_singleOrder(sellBook, 4, 0, 1, 27, 1, 27, 2, 27);
+    sellBook.deleteOrder(5);
+    BookHelperTest::test_singleOrder(sellBook, 5, 0, 1, 14, 1, 14, 1, 14);
+    sellBook.deleteOrder(6);
+    BookHelperTest::test_singleOrder(sellBook, 6, 0, 1, 0, -1, -1, 0, 0);
+}
+
+
+TEST(BookHelperTest, test_update_order) {
+    OrderBook::Book<OrderBook::TradeDirection::Sell> sellBook;
+    sellBook.submitOrder(1, 12, 2);
+    sellBook.submitOrder(2, 13, 2);
+    sellBook.submitOrder(3, 14, 2);
+    sellBook.submitOrder(4, 12, 1);
+    sellBook.submitOrder(5, 13, 1);
+    sellBook.submitOrder(6, 14, 1);
+    sellBook.submitOrder(7, 12, 3);
+    sellBook.submitOrder(8, 13, 3);
+    sellBook.submitOrder(9, 14, 3);
+
+
+    sellBook.updateOrder(9, 7, 3);
+    BookHelperTest::test_singleOrder(sellBook, 9, 7, 3, 110, 3, 32, 3, 32);
+
+    sellBook.updateOrder(9, 0, 3);
+    BookHelperTest::test_singleOrder(sellBook, 9, 0, 3, 103, 3, 25, 2, 25);
+
+    sellBook.updateOrder(8, 15, 2);
+    BookHelperTest::test_singleOrder(sellBook, 8, 15, 2, 105, 3, 12, 4, 54);
+    auto priceLevel = sellBook.GetPriceLevelByPrice(3);
+    EXPECT_EQ(priceLevel->getPrice(), 3);
+    EXPECT_EQ(priceLevel->getOrderLength(), 1);
+    EXPECT_EQ(priceLevel->getQuantity(), 12);
+
+    sellBook.updateOrder(7, 3, 1);
+    BookHelperTest::test_singleOrder(sellBook, 7, 3, 1, 96, 2, 54, 4, 42);
+    priceLevel = sellBook.GetPriceLevelByPrice(3);
+    EXPECT_EQ(priceLevel, nullptr);
+}

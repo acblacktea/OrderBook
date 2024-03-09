@@ -117,8 +117,8 @@ namespace OrderBook {
         }
 
         auto &iterator = ID2OrderMap[ID];
+        auto orderQuantity = iterator->quantity;
         auto priceLevel = ID2PriceLevelMap[ID];
-        auto quantity = priceLevel->getQuantity();
         auto status = priceLevel->cancelOrder(iterator);
         if (status != EventStatus::Success) {
             return status;
@@ -132,7 +132,7 @@ namespace OrderBook {
 
         ID2OrderMap.erase(ID);
         ID2PriceLevelMap.erase(ID);
-        totalQuantity -= quantity;
+        totalQuantity -= orderQuantity;
         return status;
     }
 
@@ -145,41 +145,54 @@ namespace OrderBook {
 
         auto &beforeIterator = ID2OrderMap[ID];
         auto beforePriceLevel = ID2PriceLevelMap[ID];
-        auto beforeQuantity = beforePriceLevel->getQuantity();
-        auto beforePrice = beforePriceLevel->getPrice();
+        auto beforeQuantity = beforeIterator->quantity;
+        auto beforePrice = beforeIterator->price;
         auto status = EventStatus::Success;
 
         if (price == beforePrice) {
-            status = quantity ? beforePriceLevel->updateOrder(beforeIterator, quantity, price) : beforePriceLevel->cancelOrder(beforeIterator);
-            if (status != EventStatus::Success) {
-                return status;
+            // only support reduce price
+            if (quantity) {
+                if (status = beforePriceLevel->updateOrder(beforeIterator, quantity, price); status != EventStatus::Success) {
+                    return status;
+                }
+            } else {
+                if (status = beforePriceLevel->cancelOrder(beforeIterator); status != EventStatus::Success) {
+                    return status;
+                }
+
+                ID2OrderMap.erase(ID);
+                ID2PriceLevelMap.erase(ID);
             }
+
 
             if (!beforePriceLevel->getOrderLength()) {
                 priceLevelMap.erase(price);
                 priceLevelOrderMap.erase(price);
             }
+
+            totalQuantity -= beforeQuantity - quantity;
         } else {
-            status = beforePriceLevel->cancelOrder(beforeIterator);
-            if (status != EventStatus::Success) {
+            if (status = beforePriceLevel->cancelOrder(beforeIterator); status != EventStatus::Success) {
                 return status;
             }
 
+            ID2OrderMap.erase(ID);
+            ID2PriceLevelMap.erase(ID);
             if (!beforePriceLevel->getOrderLength()) {
                 priceLevelMap.erase(beforePrice);
                 priceLevelOrderMap.erase(beforePrice);
             }
 
-            ID2OrderMap.erase(ID);
-            ID2PriceLevelMap.erase(ID);
-
-            if (auto nowStatus = submitOrder(ID, quantity, price); nowStatus != EventStatus::Success) {
-                /// todo add logic roll back
-                return nowStatus;
+            if (quantity) {
+                if (status = submitOrder(ID, quantity, price); status != EventStatus::Success) {
+                    /// todo add logic roll back
+                    return status;
+                }
             }
+
+            totalQuantity -= beforeQuantity;
         }
 
-        totalQuantity -= beforeQuantity - quantity;
         return status;
     }
 
