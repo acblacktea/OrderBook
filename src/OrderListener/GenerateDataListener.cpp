@@ -1,6 +1,3 @@
-//
-// Created by ByteDance on 28/2/24.
-//
 #include "GenerateDataListener.h"
 namespace OrderBook {
     void GenerateDataListener::listen() {

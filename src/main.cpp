@@ -21,7 +21,7 @@ int main(int argc, char *argv[]) {
     LockFreeRingQueue<TradeEvent> inputQueue(inputQueueSize);
     LockFreeRingQueue<TradeEvent> outputQueue(outputQueueSize);
     auto generateDataListener = GenerateDataListener(filePath, &inputQueue);
-    auto orderBookManager = orderBookManagerTest(&inputQueue, &outputQueue);
+    auto orderBookManager = OrderBookManager(&inputQueue, &outputQueue);
 
     std::thread orderProducer{[&] { generateDataListener.listen(); }};
     std::thread orderConsumer{[&] { orderBookManager.ListenEvent(); }};

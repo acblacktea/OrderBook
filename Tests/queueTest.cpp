@@ -95,3 +95,51 @@ TEST(lock_free_queue, test_multi_thread_basic_function) {
         //EXPECT_TRUE(counter.find(i) != counter.end());
     }
 }
+
+TEST(ring_queue, test_basic_function_basic) {
+    auto count = 1000000;
+    OrderBook::RingQueue<int> queue(count + 1000);
+    auto counter = std::unordered_set<int>();
+    for (auto i = 0; i < count; ++i) {
+        queue.push(i);
+    }
+
+    for (auto i = 0; i < count; ++i) {
+        auto value = queue.pop();
+        counter.insert(value);
+    }
+
+    EXPECT_EQ(queue.size(), 0);
+    EXPECT_EQ(counter.size(), count);
+
+    for (auto i = 0; i < count; ++i) {
+        EXPECT_TRUE(counter.find(i) != counter.end());
+    }
+}
+
+TEST(ring_queue, test_single_producer_single_consumer_function) {
+    constexpr auto count = 100000000;
+    OrderBook::RingQueue<int> queue(20);
+    auto counter = std::unordered_set<int>();
+    std::thread produce{[&] {
+        for (auto i = 0; i < count; ++i) {
+            queue.push(i);
+        }
+    }};
+
+    std::thread consumer{[&] {
+        for (auto i = 0; i < count; ++i) {
+            auto value = queue.pop();
+            counter.insert(value);
+        }
+
+        EXPECT_EQ(queue.size(), 0);
+        EXPECT_EQ(counter.size(), count);
+        for (auto i = 0; i < count; ++i) {
+            EXPECT_TRUE(counter.find(i) != counter.end());
+        }
+    }};
+
+    produce.join();
+    consumer.join();
+}

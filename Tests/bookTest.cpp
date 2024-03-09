@@ -20,7 +20,7 @@ public:
                                  int priceQuantity) {
         EXPECT_EQ(sellBook.GetTotalQuantity(), totalQuantity);
 
-        auto bestPriceLevel = sellBook.GetBestPriceLevel();
+        auto bestPriceLevel = sellBook.getBestPriceLevel();
         EXPECT_EQ(bestPriceLevel.price, bestPrice);
         EXPECT_EQ(bestPriceLevel.quantity, bestPriceQuantity);
 

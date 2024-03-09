@@ -1,6 +1,6 @@
 #include "OrderBookManager.h"
 namespace OrderBook {
-    void orderBookManagerTest::ListenEvent() {
+    void OrderBookManager::ListenEvent() {
         while (eventInputQueue != nullptr) {
             auto event = eventInputQueue->pop();
             if (event.status != EventStatus::Pending) {
@@ -38,16 +38,16 @@ namespace OrderBook {
         }
     }
 
-    EventStatus orderBookManagerTest::submitOrder(const TradeEvent &event) {
+    EventStatus OrderBookManager::submitOrder(const TradeEvent &event) {
         return orderBook.submitOrder(event.orderID, event.shareSize, event.price, event.direction);
     }
-    EventStatus orderBookManagerTest::updateOrder(const TradeEvent &event) {
+    EventStatus OrderBookManager::updateOrder(const TradeEvent &event) {
         return orderBook.updateOrder(event.orderID, event.shareSize, event.price, event.direction);
     }
-    EventStatus orderBookManagerTest::deleteOrder(const TradeEvent &event) {
+    EventStatus OrderBookManager::deleteOrder(const TradeEvent &event) {
         return orderBook.deleteOrder(event.orderID, event.direction);
     }
-    EventStatus orderBookManagerTest::executeVisibleOrder(const TradeEvent &event) {
+    EventStatus OrderBookManager::executeVisibleOrder(const TradeEvent &event) {
         return orderBook.executeOrder(event.orderID, event.shareSize, event.direction);
     }
 

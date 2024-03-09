@@ -61,8 +61,8 @@ namespace OrderBook {
     }
 
     void OrderBook::updateBestBidAndOffer() {
-        bestBid = buyBook.GetBestPriceLevel();
-        bestOffer = sellBook.GetBestPriceLevel();
+        bestBid = buyBook.getBestPriceLevel();
+        bestOffer = sellBook.getBestPriceLevel();
     }
 
 

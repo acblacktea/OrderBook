@@ -2,23 +2,76 @@
 #include <atomic>
 #include <tuple>
 #include <vector>
+#include <iostream>
+
 namespace OrderBook {
+    // lock free queue, thread safety
+    template<typename T>
+    class SPSCRingQueue {
+    public:
+        SPSCRingQueue() = default;
+        explicit SPSCRingQueue(int size) {
+            data.reserve(size);
+            for (auto i = 0; i < size; ++i) {
+                data.emplace_back(T());
+            }
+
+            capicity = size;
+        }
+
+        // must success
+        void push(T value) {
+            auto tail = tailAtomic.load();
+            auto nextTail = (tail + 1) % capicity;
+            auto head = 0;
+            do {
+                head = headAtomic.load();
+            } while(nextTail == head);
+            data[tail] = value;
+            tailAtomic.store(nextTail, std::memory_order::release);
+        }
+
+        T pop() {
+            int tail;
+            int head = headAtomic.load();
+            do {
+                tail = tailAtomic.load();
+            } while(head == tail);
+
+            int nextHead = (head + 1) % capicity;
+            auto value = data[head];
+            headAtomic.store(nextHead, std::memory_order::release);
+            return value;
+        }
+
+        size_t size() {
+            auto tail = tailAtomic.load();
+            auto head = headAtomic.load();
+            return ((tail - head) % capicity + capicity) % capicity;
+        }
+
+    private:
+        std::atomic<int> tailAtomic{0}, headAtomic{0};
+        int capicity{0};
+        std::vector<T> data;
+    };
+
 
     /// simple implementation of lock free queue, dont scold me....
-    /// i need to do more test to gurantee that this implementation doesnt have any concurrent problems
+    /// has concurrent bug now.
     template<typename T>
-    class LockFreeRingQueue {
+    class MPMCLockFreeRingQueue {
     public:
         using Meta = class QueueInfo {
         public:
             int head, tail, len, placeHolder /*guarantee lock free*/;
         };
 
-        LockFreeRingQueue() {
+        MPMCLockFreeRingQueue() {
             assert(std::atomic_is_lock_free(&atomicStatus));
         };
 
-        explicit LockFreeRingQueue(int size) {
+        explicit MPMCLockFreeRingQueue(int size) {
             assert(std::atomic_is_lock_free(&atomicStatus));
             data.reserve(size);
             for (auto i = 0; i < size; ++i) {
@@ -73,38 +126,5 @@ namespace OrderBook {
         std::vector<T> data;
         std::atomic<Meta> atomicStatus{{0, -1, 0, 0}};
         int capicity{0};
-    };
-
-
-    template<typename T>
-    class RingQueue {
-    public:
-        RingQueue() = default;
-        explicit RingQueue(int size) {
-            data.reserve(size);
-            capicity = size;
-        }
-
-        // must success
-        void push(T value) {
-            while (len >= capicity) {}
-            int nextTail = (tail + 1) % capicity;;
-            data[nextTail] = value;
-            tail = nextTail;
-            ++len;
-        }
-
-        T pop() {
-            while (len == 0) {}
-            auto currentHead = head;
-            head = (head + 1) % capicity;
-            --len;
-            return data[currentHead];
-        }
-
-    private:
-        int tail{-1}, head{0}, len;
-        int capicity{0};
-        std::vector<T> data;
     };
 }// namespace OrderBook

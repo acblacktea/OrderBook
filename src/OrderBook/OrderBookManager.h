@@ -3,18 +3,30 @@
 #include "OrderBook.h"
 #include "unordered_map"
 namespace OrderBook {
-    class orderBookManagerTest {
+    enum class OrderState {
+        failSubmit,
+        insideBook,
+        executed,
+        cancel,
+    };
+
+
+    class OrderBookManager {
     public:
         using eQueue = LockFreeRingQueue<TradeEvent>;
-        orderBookManagerTest() = default;
-        orderBookManagerTest(eQueue *inputQueue, eQueue *outputQueue)
+        OrderBookManager() = default;
+        OrderBookManager(eQueue *inputQueue, eQueue *outputQueue)
             :eventInputQueue{inputQueue}, eventOutputQueue{outputQueue} {};
         void ListenEvent();
-
+        using orderInfo = class {
+            OrderState state;
+            TradeDirection direction;
+        };
     private:
         OrderBook orderBook; // currently only support one order book, in future will support multi order book
         eQueue *eventInputQueue{};
         eQueue *eventOutputQueue{};
+        std::unordered_map<int, OrderState> ordersState;
 
         EventStatus submitOrder(const TradeEvent &event);
         EventStatus updateOrder(const TradeEvent &event);

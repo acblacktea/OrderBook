@@ -13,7 +13,7 @@ namespace OrderBook {
         EventStatus updateOrder(orderID ID, unsigned int quantity, unsigned int price);
         EventStatus deleteOrder(orderID ID);
         EventStatus executeOrder(orderID ID, unsigned int quantity);
-        BestPriceLevel GetBestPriceLevel();
+        BestPriceLevel getBestPriceLevel();
 
         // only used for testing now, real production will use event driven way transmit information.
         const PriceLevel *GetPriceLevelByPrice(unsigned int price) const;
@@ -32,7 +32,7 @@ namespace OrderBook {
 
     /// GetBestPriceLevel O(1)
     template<TradeDirection buyOrSell>
-    BestPriceLevel Book<buyOrSell>::GetBestPriceLevel() {
+    BestPriceLevel Book<buyOrSell>::getBestPriceLevel() {
         if (!priceLevelOrderMap.empty()) {
             std::map<price, PriceLevel *>::iterator bestPrice;
             if (side == TradeDirection::Buy) {
@@ -149,7 +149,7 @@ namespace OrderBook {
         auto beforePrice = beforeIterator->price;
         auto status = EventStatus::Success;
 
-        if (price == beforePrice) {
+        if (price == beforePrice && quantity <= beforeQuantity) {
             // only support reduce price
             if (quantity) {
                 if (status = beforePriceLevel->updateOrder(beforeIterator, quantity, price); status != EventStatus::Success) {
