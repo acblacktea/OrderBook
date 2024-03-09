@@ -6,7 +6,7 @@
 
 TEST(lock_free_queue, test_basic_function_basic) {
     auto count = 1000000;
-    OrderBook::LockFreeRingQueue<int> queue(count + 1000);
+    OrderBook::MPMCLockFreeRingQueue<int> queue(count + 1000);
     auto counter = std::unordered_set<int>();
     for (auto i = 0; i < count; ++i) {
         queue.push(i);
@@ -28,7 +28,7 @@ TEST(lock_free_queue, test_basic_function_basic) {
 
 TEST(lock_free_queue, test_basic_function) {
     auto count = 100000;
-    OrderBook::LockFreeRingQueue<int> queue(2);
+    OrderBook::MPMCLockFreeRingQueue<int> queue(2);
     auto counter = std::unordered_set<int>();
     std::thread produce{[&] {
         for (auto i = 0; i < count; ++i) {
@@ -56,7 +56,7 @@ TEST(lock_free_queue, test_basic_function) {
 TEST(lock_free_queue, test_multi_thread_basic_function) {
     auto count = 1000000;
     auto thread = 10;
-    OrderBook::LockFreeRingQueue<int> queue(1000);
+    OrderBook::MPMCLockFreeRingQueue<int> queue(1000);
     auto counter = std::unordered_set<int>();
     auto threads = std::vector<std::thread>();
 
@@ -98,7 +98,7 @@ TEST(lock_free_queue, test_multi_thread_basic_function) {
 
 TEST(ring_queue, test_basic_function_basic) {
     auto count = 1000000;
-    OrderBook::RingQueue<int> queue(count + 1000);
+    OrderBook::SPSCLockFreeRingQueue<int> queue(count + 1000);
     auto counter = std::unordered_set<int>();
     for (auto i = 0; i < count; ++i) {
         queue.push(i);
@@ -119,7 +119,7 @@ TEST(ring_queue, test_basic_function_basic) {
 
 TEST(ring_queue, test_single_producer_single_consumer_function) {
     constexpr auto count = 100000000;
-    OrderBook::RingQueue<int> queue(20);
+    OrderBook::SPSCLockFreeRingQueue<int> queue(20);
     auto counter = std::unordered_set<int>();
     std::thread produce{[&] {
         for (auto i = 0; i < count; ++i) {

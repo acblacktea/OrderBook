@@ -7,10 +7,10 @@
 namespace OrderBook {
     // lock free queue, thread safety
     template<typename T>
-    class SPSCRingQueue {
+    class SPSCLockFreeRingQueue {
     public:
-        SPSCRingQueue() = default;
-        explicit SPSCRingQueue(int size) {
+        SPSCLockFreeRingQueue() = default;
+        explicit SPSCLockFreeRingQueue(int size) {
             data.reserve(size);
             for (auto i = 0; i < size; ++i) {
                 data.emplace_back(T());

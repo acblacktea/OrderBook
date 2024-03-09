@@ -13,7 +13,7 @@ namespace OrderBook {
 
     class OrderBookManager {
     public:
-        using eQueue = LockFreeRingQueue<TradeEvent>;
+        using eQueue = SPSCLockFreeRingQueue<TradeEvent>;
         OrderBookManager() = default;
         OrderBookManager(eQueue *inputQueue, eQueue *outputQueue)
             :eventInputQueue{inputQueue}, eventOutputQueue{outputQueue} {};
