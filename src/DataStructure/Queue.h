@@ -5,7 +5,7 @@
 #include <iostream>
 
 namespace OrderBook {
-    // lock free queue, thread safety
+    // lock free queue, thread safety, one produce, one consumer
     template<typename T>
     class SPSCLockFreeRingQueue {
     public:
@@ -39,9 +39,8 @@ namespace OrderBook {
             } while(head == tail);
 
             int nextHead = (head + 1) % capicity;
-            auto value = data[head];
             headAtomic.store(nextHead, std::memory_order::release);
-            return value;
+            return data[head];
         }
 
         size_t size() {
@@ -94,9 +93,9 @@ namespace OrderBook {
 
 
         inline bool tryPush(T& value) {
-            Meta status = atomicStatus.load(std::memory_order_relaxed);;
+            Meta status = atomicStatus.load(std::memory_order_acq_rel);
             int nextTail = (status.tail + 1) % capicity;;
-            if (status.len < capicity && atomicStatus.compare_exchange_weak(status, {status.head, nextTail, status.len + 1, 0})) {
+            if (status.len < capicity && atomicStatus.compare_exchange_weak(status, {status.head, nextTail, status.len + 1, 0}, std::memory_order_acq_rel)) {
                 data[nextTail] = value;
                 return true;
             }
@@ -106,9 +105,9 @@ namespace OrderBook {
 
 
         inline bool tryPop(T &value) {
-            Meta status = atomicStatus.load(std::memory_order_relaxed);
+            Meta status = atomicStatus.load(std::memory_order_acq_rel);
             int nextHead = (status.head + 1) % capicity;
-            if (status.len > 0 && atomicStatus.compare_exchange_weak(status, {nextHead, status.tail, status.len - 1, 0})) {
+            if (status.len > 0 && atomicStatus.compare_exchange_weak(status, {nextHead, status.tail, status.len - 1, 0}, std::memory_order_acq_rel)) {
                 value = T(data[status.head]);
                 return true;
             }
@@ -117,7 +116,7 @@ namespace OrderBook {
         }
 
         size_t size() {
-            auto status = atomicStatus.load(std::memory_order_relaxed);
+            auto status = atomicStatus.load(std::memory_order_acq_rel);
             return status.len;
         }
 

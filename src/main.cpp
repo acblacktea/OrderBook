@@ -18,8 +18,8 @@ int main(int argc, char *argv[]) {
         }
     }
 
-    LockFreeRingQueue<TradeEvent> inputQueue(inputQueueSize);
-    LockFreeRingQueue<TradeEvent> outputQueue(outputQueueSize);
+    SPSCLockFreeRingQueue<TradeEvent> inputQueue(inputQueueSize);
+    SPSCLockFreeRingQueue<TradeEvent> outputQueue(outputQueueSize);
     auto generateDataListener = GenerateDataListener(filePath, &inputQueue);
     auto orderBookManager = OrderBookManager(&inputQueue, &outputQueue);
 
