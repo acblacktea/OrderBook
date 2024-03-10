@@ -376,7 +376,6 @@ TEST(ring_queue, test_single_producer_single_consumer_function) {
 
 
 TEST(QueueHelperTest, test_benchmark) {
-    /*
     std::cout << "producer speed nearly equal to consumer speed " << std::endl;
     QueueHelperTest::test_benchmark_producer_consumer_speed_equal(100000000, 10);
     QueueHelperTest::test_benchmark_producer_consumer_speed_equal(100000000, 100);
@@ -384,7 +383,6 @@ TEST(QueueHelperTest, test_benchmark) {
     QueueHelperTest::test_benchmark_producer_consumer_speed_equal(100000000, 10000);
     QueueHelperTest::test_benchmark_producer_consumer_speed_equal(100000000, 100000);
     QueueHelperTest::test_benchmark_producer_consumer_speed_equal(100000000, 1000000);
-    */
 
     std::cout << "consumer speed < produce speed " << std::endl;
     QueueHelperTest::test_benchmark_consumer_speed_less_than_producer(100000000, 10);
@@ -395,7 +393,6 @@ TEST(QueueHelperTest, test_benchmark) {
     QueueHelperTest::test_benchmark_consumer_speed_less_than_producer(100000000, 1000000);
 
 
-    /*
     std::cout << "producer speed < consumer speed " << std::endl;
     QueueHelperTest::test_benchmark_producer_speed_less_than_consumer(100000000, 10);
     QueueHelperTest::test_benchmark_producer_speed_less_than_consumer(100000000, 100);
@@ -403,5 +400,4 @@ TEST(QueueHelperTest, test_benchmark) {
     QueueHelperTest::test_benchmark_producer_speed_less_than_consumer(100000000, 10000);
     QueueHelperTest::test_benchmark_producer_speed_less_than_consumer(100000000, 100000);
     QueueHelperTest::test_benchmark_producer_speed_less_than_consumer(100000000, 1000000);
-    */
 }
