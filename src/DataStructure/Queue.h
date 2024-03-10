@@ -55,6 +55,49 @@ namespace OrderBook {
         std::vector<T> data;
     };
 
+    template<typename T>
+    class RingQueue {
+    public:
+        RingQueue() = default;
+        explicit RingQueue(int size) {
+            data.reserve(size);
+            for (auto i = 0; i < size; ++i) {
+                data.emplace_back(T());
+            }
+
+            capicity = size;
+        }
+
+        // must success
+        void push(T value) {
+            auto nextTail = (tail + 1) % capicity;
+            do {} while(nextTail == head);
+
+            std::lock_guard<std::mutex> lock(mutex);
+            data[tail] = value;
+            tail = nextTail;
+        }
+
+        T pop() {
+            do {} while(head == tail);
+
+            std::lock_guard<std::mutex> lock(mutex);
+            auto value = data[head];
+            head = (head + 1) % capicity;
+            return value;
+        }
+
+        size_t size() {
+            return ((tail - head) % capicity + capicity) % capicity;
+        }
+
+    private:
+        int tail{0}, head{0};
+        int capicity{0};
+        std::mutex mutex;
+        std::vector<T> data;
+    };
+
 
     /// simple implementation of lock free queue, dont scold me....
     /// has concurrent bug now.
