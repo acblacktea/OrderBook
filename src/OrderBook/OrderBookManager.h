@@ -18,6 +18,10 @@ namespace OrderBook {
         OrderBookManager(eQueue *inputQueue, eQueue *outputQueue)
             :eventInputQueue{inputQueue}, eventOutputQueue{outputQueue} {};
         void ListenEvent();
+        TradeEvent getHandledEvent() {
+            return eventOutputQueue->pop();
+        }
+
         using orderInfo = class {
             OrderState state;
             TradeDirection direction;

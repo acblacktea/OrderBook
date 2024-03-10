@@ -29,7 +29,8 @@ namespace OrderBook {
                     break;
                 case EventType::TradingHaltIndicator:
                     event.status = EventStatus::Success;
-                    break;
+                    eventOutputQueue->push(event);
+                    return;
                 default:
                     event.status = EventStatus::Unsupported;
             }
