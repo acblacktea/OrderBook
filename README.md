@@ -19,6 +19,8 @@
 ## optimization
 #### this component guarantee O(1) algorithm complexity of submit/cancel/update/trade order. and try to avoid lock data structure (lock free) and memory pool to optimize performance.
 ## architecture diagram (soon..)
+![img_1.png](pict/img_1.png)
+![img.png](pict/img5.png)
 ## stream data
 #### mainly use generate data to test order book (src/OrderBookGenerator), it's also can buy historical data of Nasdaq ITCH data to test&improve performance, but i am poor, so i give up.
 
